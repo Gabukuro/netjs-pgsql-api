@@ -1,6 +1,7 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { CredentialsDto } from './dtos/credentials.dto';
 import { UserRole } from './user-roles.enum';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
@@ -17,5 +18,13 @@ export class UserService {
             throw new UnprocessableEntityException('As senhas não conferem');
         }
         return this.userRepository.createUser(createUserDto, UserRole.ADMIN);
+    }
+
+    async sigIn(credentialsDto:  CredentialsDto) {
+        const user = await this.userRepository.checkCredentials(credentialsDto);
+
+        if(user === null) {
+            throw new UnauthorizedException('Credenciais inválidas');
+        }
     }
 }
