@@ -8,12 +8,12 @@ import { UserRole } from './user-roles.enum';
 import { UserService } from './user.service';
 
 @Controller('user')
+@UseGuards(AuthGuard(), RolesGuard)
 export class UserController {
     constructor(private userService: UserService) {}
 
     @Post()
     @Role(UserRole.ADMIN)
-    @UseGuards(AuthGuard(), RolesGuard)
     async createAdminUser (
         @Body(ValidationPipe) createUserDto: CreateUserDto,
     ): Promise<ReturnUserDto> {
