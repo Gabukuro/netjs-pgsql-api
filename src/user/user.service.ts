@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { CredentialsDto } from './dtos/credentials.dto';
@@ -26,5 +26,15 @@ export class UserService {
         if(user === null) {
             throw new UnauthorizedException('Credenciais inválidas');
         }
+    }
+
+    async findUserById(userId: string): Promise<User> {
+        const user = await this.userRepository.findOne(userId, {
+            select: ['email', 'name', 'role', 'id'],
+        });
+
+        if(!user) throw new NotFoundException('Usuário não encontrado');
+
+        return user;
     }
 }

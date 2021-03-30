@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Role } from '../auth/role.decorator';
@@ -23,4 +23,15 @@ export class UserController {
             message: 'Administrador criado com sucesso',
         };
     }
+
+    @Get(':id')
+    @Role(UserRole.ADMIN)
+    async findUserById(@Param('id') id): Promise<ReturnUserDto> {
+        const user = await this.userService.findUserById(id);
+        return {
+            user, 
+            message: 'Usuário encontrado',
+        };
+    }
+
 }
