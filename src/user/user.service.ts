@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { CredentialsDto } from './dtos/credentials.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserRole } from './user-roles.enum';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
@@ -36,5 +37,22 @@ export class UserService {
         if(!user) throw new NotFoundException('Usuário não encontrado');
 
         return user;
+    }
+
+    async updateUser(updateUserDto: UpdateUserDto, id: string): Promise<User> {
+        const user = await this.findUserById(id);
+        const { name, email, role, status } = updateUserDto;
+        user.name = name ?? user.name;
+        user.email = email ?? user.email;
+        user.role = role ?? user.role;
+        user.status = status ?? user.status;
+        try {
+            await user.save();
+            return user;
+        } catch (error) {
+            throw new InternalServerErrorException(
+                'Erro ao salvar os dados no banco de dados',
+            )
+        }
     }
 }

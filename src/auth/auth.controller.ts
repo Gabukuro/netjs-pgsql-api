@@ -4,7 +4,7 @@ import { CredentialsDto } from 'src/user/dtos/credentials.dto';
 import { User } from '../user/user.entity';
 import { CreateUserDto } from '../user/dtos/create-user.dto';
 import { AuthService } from './auth.service';
-import { getuser } from '../user/get-user.decorator';
+import { GetUser } from '../user/get-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +29,7 @@ export class AuthController {
 
     @Get('/me')
     @UseGuards(AuthGuard())
-    getMe(@getuser() user): User {
+    getMe(@GetUser() user): User {
         return user;
     }
 }
