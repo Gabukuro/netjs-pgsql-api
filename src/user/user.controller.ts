@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Param, Patch, Post, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, ForbiddenException, Get, Param, Patch, Post, Query, UseGuards, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Role } from '../auth/role.decorator';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { FindUserQueryDto } from './dtos/find-user-query.dto';
 import { ReturnUserDto } from './dtos/return-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { GetUser } from './get-user.decorator';
@@ -60,4 +61,13 @@ export class UserController {
         };
     }
 
+    @Get()
+    @Role(UserRole.ADMIN)
+    async findUsers(@Query() query: FindUserQueryDto) {
+        const found = await this.userService.findUsers(query);
+        return {
+            found,
+            message: 'Usuários encontrados',
+        };
+    }
 }
