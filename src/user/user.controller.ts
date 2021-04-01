@@ -1,4 +1,4 @@
-import { Body, Controller, ForbiddenException, Get, Param, Patch, Post, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, ForbiddenException, Get, Param, Patch, Post, UseGuards, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Role } from '../auth/role.decorator';
@@ -49,6 +49,15 @@ export class UserController {
             );
         }
         return this.userService.updateUser(updateUserDto, id);
+    }
+
+    @Delete(':id')
+    @Role(UserRole.ADMIN)
+    async deleteUser(@Param('id') id: string) {
+        await this.userService.deleteUser(id);
+        return {
+            message: 'Usuário removido com sucesso',
+        };
     }
 
 }
