@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException, NotFoundException, Unauthoriz
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { CredentialsDto } from './dtos/credentials.dto';
+import { FindUserQueryDto } from './dtos/find-user-query.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserRole } from './user-roles.enum';
 import { User } from './user.entity';
@@ -63,5 +64,12 @@ export class UserService {
                 'Não foi possível encontrar um usuário com o ID informado',
             );
         }
+    }
+
+    async findUsers(
+        queryDto: FindUserQueryDto,
+    ): Promise<{ users: User[]; total: number }> {
+        const users = await this.userRepository.findUsers(queryDto);
+        return users;
     }
 }
